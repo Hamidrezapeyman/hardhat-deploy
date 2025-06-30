@@ -1,0 +1,105 @@
+import 'hardhat-deploy';
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types';
+
+const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+  // code here
+};
+export default func;
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "include": ["./hardhat.config.ts", "./scripts", "./deploy", "./test"]
+}{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
+  },
+  "include": ["./hardhat.config.ts", "./scripts", "./deploy", "./test"]
+}
+const config: HardhatUserConfig = {
+  solidity: '0.8.23',
+  namedAccounts: {
+    deployer: 0,
+  },
+};
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types';
+import { ethers } from 'hardhat';
+
+const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+  const { deploy } = hre.deployments;
+  // We can now use deployer
+  const { deployer } = await hre.getNamedAccounts();
+
+  // The value we want to lock
+  const VALUE_LOCKED = hre.ethers.parseEther('0.01');
+
+  // The unlock time after deployment
+  const UNLOCK_TIME = 10000;
+
+  // We use ethers to get the current time stamp
+  const blockNumber = await ethers.provider.getBlockNumber();
+  const lastBlockTimeStamp = (await ethers.provider.getBlock(blockNumber))?.timestamp as number;
+
+  // We say we want to deploy our Lock contract using the deployer
+  // account and passing the value and arguments.
+  await deploy('Lock', {
+    from: deployer,
+    args: [lastBlockTimeStamp + UNLOCK_TIME],
+    value: VALUE_LOCKED.toString(),
+  });
+};
+
+export default func;
+
+// This tag will help us in the next section to trigger this deployment file programmatically
+func.tags = ['DeployAll'];
+import { ethers, deployments } from 'hardhat';
+  Lock
+    ✔ should get the unlockTime value
+    ✔ should have the right ether balance
+    ✔ should have the right owner
+    ✔ shouldn't allow to withdraw before unlock time (51ms)
+    ✔ shouldn't allow to withdraw a non owner
+    ✔ should allow to withdraw an owner
+
+  6 passing (2s)
+  const config: HardhatUserConfig = {
+  solidity: '0.8.18',
+  namedAccounts: {
+    deployer: 0,
+  },
+  networks: {
+    base_sepolia: {
+      url: 'https://sepolia.base.org',
+      accounts: {
+        mnemonic: process.env.MNEMONIC ?? '',
+      },
+    },
+    sepolia: {
+      url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_SEPOLIA_KEY ?? ''}`,
+      accounts: {
+        mnemonic: process.env.MNEMONIC ?? '',
+      },
+    },
+  },
+};
+npm install -D dotenv
+import dotenv from 'dotenv';
+
+dotenv.config();
+npx hardhat deploy --network base_sepolia
+npx hardhat deploy --network sepolia
